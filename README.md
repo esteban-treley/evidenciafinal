@@ -5,6 +5,10 @@ Evidencia Final de Computación en Java de Tec Milenio
 ## Uso del programa
 El programa sirve para administrar citas, doctores y pacientes de un hospital o clínica.
 
+## Requerimientos
+El programa necesita Java 11, Netbeans y Java - Maven.
+
+
 ## Creditos
 Esteban Treviño Leyva, estudiante de Tec Milenio y desarrollador profesional.
 
