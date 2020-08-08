@@ -6,8 +6,8 @@
 package com.mycompany.evidencia;
 
 import java.util.Scanner;
-import com.mycompany.evidencia.*;
-
+import com.mycompany.evidencia.Doctor;
+import com.mycompany.evidencia.Patient;
 /**
  *
  * @author esteban
@@ -45,6 +45,7 @@ public class Principal {
                         registerDoctor();
                         break;
                     case 2:
+                        registerPatient();
                         break;
                     case 3:
                         break;
@@ -67,12 +68,13 @@ public class Principal {
                 System.out.println("4. Establecer doctor y paciente a cita");
                 System.out.println("5. Salir");
                 option = Integer.parseInt(readline.nextLine());
-
+                System.out.println(option);
                 switch (option) {
                     case 1:
                         registerDoctor();
                         break;
                     case 2:
+                        registerPatient();
                         break;
                     case 3:
                         break;
@@ -107,4 +109,20 @@ public class Principal {
             e.printStackTrace();
         }
     }
+
+    public static void registerPatient() {
+        try {
+            Patient newPatient = new Patient();
+            newPatient.setConsecutiveId();
+            Scanner read = new Scanner(System.in);
+
+            System.out.print("Escriba nombre del paciente: ");
+            newPatient.setName(read.nextLine());
+
+            newPatient.save();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

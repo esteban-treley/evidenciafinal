@@ -14,22 +14,20 @@ import java.io.FileWriter;
  *
  * @author esteban
  */
-public class Doctor {
+public class Patient {
 
     //Atributes
     public int id;
     public String name;
-    public String speciality;
 
-    private String fileName = "Doctor.csv";
+    private String fileName = "Patient.csv";
    
     //Constructors
-    public Doctor() {
+    public Patient() {
     }
 
-    public Doctor(String name, String speciality) {
+    public Patient(String name) {
         this.name = name;
-        this.speciality = speciality;
     }
 
     //Methods
@@ -37,33 +35,33 @@ public class Doctor {
         this.name = name;
     }
 
-    public static File getDoctorFile() {
+    public static File getPatientFile() {
         File here = new File(".");
-        File doctorFile = null;
+        File patientFile = null;
 
         try {
             String herePath;
-            herePath = here.getCanonicalPath() + "/Doctor.csv";
-            doctorFile = new File(herePath);
-            if (!doctorFile.exists()) {
-                doctorFile.createNewFile();
+            herePath = here.getCanonicalPath() + "/Patient.csv";
+            patientFile = new File(herePath);
+            if (!patientFile.exists()) {
+                patientFile.createNewFile();
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return doctorFile;
+        return patientFile;
     }
 
     public void setConsecutiveId() {
 
         String line = null;
-        File doctorFile = getDoctorFile();
+        File patientFile = getPatientFile();
         int countLine = 0;
         try {
-            Scanner scanDoctorFile = new Scanner(doctorFile);
-            while (scanDoctorFile.hasNextLine()) {
-                line = scanDoctorFile.nextLine();
+            Scanner scanPatientFile = new Scanner(patientFile);
+            while (scanPatientFile.hasNextLine()) {
+                line = scanPatientFile.nextLine();
                 countLine++;
             }
         } catch (Exception e) {
@@ -73,13 +71,9 @@ public class Doctor {
         this.id = line != "" && countLine > 0 ? Integer.parseInt(line.split(",")[0]) + 1 : 1;
 
     }
-   
+
     public void setId(int id) {
         this.id = id;
-    }
-
-    public void setSpeciality(String speciality) {
-        this.speciality = speciality;
     }
 
     public int getId() {
@@ -90,14 +84,10 @@ public class Doctor {
         return this.name;
     }
 
-    public String getSpeciality() {
-        return this.speciality;
-    }
-
     public void save() {
-        String data = Integer.toString(this.id) + "," + this.name + "," + this.speciality;
+        String data = Integer.toString(this.id) + "," + this.name;
         try {
-            File file = getDoctorFile();
+            File file = getPatientFile();
             FileWriter fr = new FileWriter(file, true);
             fr.write(data);
             fr.write(System.lineSeparator());
