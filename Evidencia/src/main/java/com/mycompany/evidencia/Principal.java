@@ -5,10 +5,10 @@
  */
 package com.mycompany.evidencia;
 
+import java.util.ArrayList;
 import java.util.Scanner;
-import com.mycompany.evidencia.Doctor;
-import com.mycompany.evidencia.Patient;
-import com.mycompany.evidencia.Date;
+import java.io.File;
+import java.io.FileWriter;
 
 /**
  *
@@ -17,15 +17,23 @@ import com.mycompany.evidencia.Date;
 public class Principal {
 
     public static void main(String[] args) {
-        String user, password;
+        String user = "", password = "";
         Scanner readline = new Scanner(System.in);
+        do {
+            System.out.println("*****SISTEMA INTEGRAL DE REGISTROS MEDICOS*****");
+            System.out.println("Ingrese usuario: ");
+            user = readline.nextLine();
+            System.out.println("Ingrese contraseña: ");
+            password = readline.nextLine();
 
-        System.out.println("*****SISTEMA INTEGRAL DE REGISTROS MEDICOS*****");
-        System.out.println("Ingrese usuario: ");
-        user = readline.nextLine();
-        System.out.println("Ingrese contraseña: ");
-        password = readline.nextLine();
-        showMenu();
+            if (user.equals("admin") && password.equals("admin123")) {
+                showMenu();
+            } else {
+                System.out.println();
+                System.out.println("Error! Las credenciales no son correctas. Intente de nuevo.");
+            }
+        } while (!user.equals("admin") || !password.equals("admin123"));
+
     }
 
     public static void showMenu() {
@@ -39,7 +47,8 @@ public class Principal {
                 System.out.println("2. Registrar paciente");
                 System.out.println("3. Registrar cita");
                 System.out.println("4. Establecer doctor y paciente a cita");
-                System.out.println("5. Salir");
+                System.out.println("5. Ver lista de citas");
+                System.out.println("6. Salir");
                 option = Integer.parseInt(readline.nextLine());
 
                 switch (option) {
@@ -53,8 +62,12 @@ public class Principal {
                         registerDate();
                         break;
                     case 4:
+                        manageDates();
                         break;
                     case 5:
+                        showDates();
+                        break;
+                    case 6:
                         break;
                     default:
                         System.out.println();
@@ -63,36 +76,9 @@ public class Principal {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                System.out.println();
-                System.out.println("*****MENU*****");
-                System.out.println("1. Registrar doctor");
-                System.out.println("2. Registrar paciente");
-                System.out.println("3. Registrar cita");
-                System.out.println("4. Establecer doctor y paciente a cita");
-                System.out.println("5. Salir");
-                option = Integer.parseInt(readline.nextLine());
-                System.out.println(option);
-                switch (option) {
-                    case 1:
-                        registerDoctor();
-                        break;
-                    case 2:
-                        registerPatient();
-                        break;
-                    case 3:
-                        break;
-                    case 4:
-                        break;
-                    case 5:
-                        break;
-                    default:
-                        System.out.println();
-                        System.out.println("Esta opción no existe. Por favor, elige otra.");
-                        System.out.println("********************");
-                }
             }
 
-        } while (option != 5);
+        } while (option != 6);
 
     }
 
@@ -147,7 +133,7 @@ public class Principal {
                     System.out.println();
                 }
             } while (!validateDate);
-            
+
             boolean validateTime = false;
             do {
                 String time = "";
@@ -168,6 +154,142 @@ public class Principal {
             newDate.save();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void manageDates() {
+        System.out.println("*******ADMINISTARCION DE CITAS**********");
+        System.out.println();
+        Scanner read = new Scanner(System.in);
+
+        /* 
+        CITAS
+        Se muestran todas las citas, y luego se escoge el ID de la cita a asignarle doctor y paciente.
+         */
+        ArrayList<Date> dateList = getDates();
+        for (Date date : dateList) {
+            System.out.println(date.getId() + ", " + date.getDate() + " " + date.getTime() + ", " + date.getMotive() + ", " + date.getDoctorId() + ", " + date.getPatientId());
+        }
+        System.out.print("Ingresa el ID de la cita a administrar: ");
+        int citaId = Integer.parseInt(read.nextLine());
+
+        /* 
+        DOCTOR
+        Se muestran todos los doctores, y luego se escoge el ID del doctor a quien se le asigará la cita.
+         */
+        ArrayList<Doctor> doctorList = getDoctors();
+        for (Doctor doctor : doctorList) {
+            System.out.println(doctor.getId() + ", " + doctor.getName() + " " + doctor.getSpeciality());
+        }
+        System.out.print("Ingresa el ID de la doctor a agendar cita: ");
+        int doctorId = Integer.parseInt(read.nextLine());
+
+        /* 
+        Paciente
+        Se muestran todos los pacientes, y luego se escoge el ID del paciente a quien se le asigará la cita.
+         */
+        ArrayList<Patient> patientList = getPatients();
+        for (Patient patient : patientList) {
+            System.out.println(patient.getId() + ", " + patient.getName());
+        }
+        System.out.print("Ingresa el ID de la doctor a agendar cita: ");
+        int patientId = Integer.parseInt(read.nextLine());
+
+        try {
+            File file = Date.getDateFile();
+            FileWriter fr = new FileWriter(file, false);
+            for (Date date : dateList) {
+                if (date.getId() == citaId) {
+                    date.setDoctorId(doctorId);
+                    date.setPatientId(patientId);
+                    String data = Integer.toString(date.getId()) + "," + date.getDate() + "," + date.getTime() + "," + date.getMotive() + "," + Integer.toString(date.getDoctorId()) + "," + Integer.toString(date.getPatientId());
+                    fr.write(data);
+                    fr.write(System.lineSeparator());
+                } else {
+                    String data = Integer.toString(date.getId()) + "," + date.getDate() + "," + date.getTime() + "," + date.getMotive() + "," + Integer.toString(date.getDoctorId()) + "," + Integer.toString(date.getPatientId());
+                    fr.write(data);
+                    fr.write(System.lineSeparator());
+                }
+            }
+            fr.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public static ArrayList getDoctors() {
+        ArrayList<Doctor> doctorList = new ArrayList<Doctor>();
+        File doctorFile = Doctor.getDoctorFile();
+        try {
+            String[] line;
+            Scanner scanDoctorFile = new Scanner(doctorFile);
+            while (scanDoctorFile.hasNextLine()) {
+                line = scanDoctorFile.nextLine().split(",");
+                doctorList.add(new Doctor(Integer.parseInt(line[0]), line[1], line[2]));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return doctorList;
+    }
+
+    public static ArrayList getPatients() {
+        ArrayList<Patient> patientList = new ArrayList<Patient>();
+        File patientFile = Patient.getPatientFile();
+        try {
+            String[] line;
+            Scanner scanPatientFile = new Scanner(patientFile);
+            while (scanPatientFile.hasNextLine()) {
+                line = scanPatientFile.nextLine().split(",");
+                patientList.add(new Patient(Integer.parseInt(line[0]), line[1]));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return patientList;
+    }
+
+    public static ArrayList getDates() {
+        ArrayList<Date> dateList = new ArrayList<Date>();
+        File dateFile = Date.getDateFile();
+        try {
+            String[] line;
+            Scanner scanDoctorFile = new Scanner(dateFile);
+            while (scanDoctorFile.hasNextLine()) {
+                line = scanDoctorFile.nextLine().split(",");
+                dateList.add(new Date(Integer.parseInt(line[0]), line[1], line[2], line[3], Integer.parseInt(line[4]), Integer.parseInt(line[5])));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return dateList;
+    }
+
+    public static void showDates() {
+        System.out.println("**********LISTA DE CITAS***********");
+        ArrayList<Date> dates = getDates();
+        ArrayList<Doctor> doctors = getDoctors();
+        ArrayList<Patient> patients = getPatients();
+        String doctorName, patientName;
+        for (Date date : dates) {
+            doctorName = "";
+            patientName = "";
+            for (Doctor doctor : doctors) {
+                if (doctor.getId() == date.getDoctorId()) {
+                    doctorName = doctor.getName();
+                }
+            }
+            for (Patient patient : patients) {
+                if (patient.getId() == date.getDoctorId()) {
+                    patientName = patient.getName();
+                }
+            }
+            System.out.println(date.getId() + ", " + date.getDate() + " " + date.getTime() + ", " + date.getMotive() + ", Doctor: " + doctorName + ", Paciente: " + patientName);
         }
     }
 }

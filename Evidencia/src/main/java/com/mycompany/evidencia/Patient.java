@@ -21,12 +21,17 @@ public class Patient {
     public String name;
 
     private String fileName = "Patient.csv";
-   
+
     //Constructors
     public Patient() {
     }
 
     public Patient(String name) {
+        this.name = name;
+    }
+
+    public Patient(int id, String name) {
+        this.id = id;
         this.name = name;
     }
 
@@ -40,8 +45,13 @@ public class Patient {
         File patientFile = null;
 
         try {
-            String herePath;
-            herePath = here.getCanonicalPath() + "/Patient.csv";
+            String herePath, directoryPath;
+            
+            directoryPath = here.getCanonicalPath() + "/db";
+            if(!new File(directoryPath).exists()){
+                new File(directoryPath).mkdir();
+            }
+            herePath = directoryPath + "/Patient.csv";
             patientFile = new File(herePath);
             if (!patientFile.exists()) {
                 patientFile.createNewFile();

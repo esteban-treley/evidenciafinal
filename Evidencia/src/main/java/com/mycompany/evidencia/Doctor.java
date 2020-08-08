@@ -22,12 +22,17 @@ public class Doctor {
     public String speciality;
 
     private String fileName = "Doctor.csv";
-   
+
     //Constructors
     public Doctor() {
     }
 
     public Doctor(String name, String speciality) {
+        this.name = name;
+        this.speciality = speciality;
+    }
+    public Doctor(int id, String name, String speciality) {
+        this.id = id;
         this.name = name;
         this.speciality = speciality;
     }
@@ -42,8 +47,13 @@ public class Doctor {
         File doctorFile = null;
 
         try {
-            String herePath;
-            herePath = here.getCanonicalPath() + "/Doctor.csv";
+            String herePath, directoryPath;
+            
+            directoryPath = here.getCanonicalPath() + "/db";
+            if(!new File(directoryPath).exists()){
+                new File(directoryPath).mkdir();
+            }
+            herePath = directoryPath + "/Doctor.csv";
             doctorFile = new File(herePath);
             if (!doctorFile.exists()) {
                 doctorFile.createNewFile();
@@ -56,7 +66,6 @@ public class Doctor {
     }
 
     public void setConsecutiveId() {
-
         String line = null;
         File doctorFile = getDoctorFile();
         int countLine = 0;
@@ -73,7 +82,7 @@ public class Doctor {
         this.id = line != "" && countLine > 0 ? Integer.parseInt(line.split(",")[0]) + 1 : 1;
 
     }
-   
+
     public void setId(int id) {
         this.id = id;
     }
@@ -106,4 +115,5 @@ public class Doctor {
             e.printStackTrace();
         }
     }
+
 }
