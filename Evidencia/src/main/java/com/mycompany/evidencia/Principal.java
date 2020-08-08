@@ -8,6 +8,8 @@ package com.mycompany.evidencia;
 import java.util.Scanner;
 import com.mycompany.evidencia.Doctor;
 import com.mycompany.evidencia.Patient;
+import com.mycompany.evidencia.Date;
+
 /**
  *
  * @author esteban
@@ -48,6 +50,7 @@ public class Principal {
                         registerPatient();
                         break;
                     case 3:
+                        registerDate();
                         break;
                     case 4:
                         break;
@@ -125,4 +128,46 @@ public class Principal {
         }
     }
 
+    public static void registerDate() {
+        try {
+            Date newDate = new Date();
+            newDate.setConsecutiveId();
+            Scanner read = new Scanner(System.in);
+            boolean validateDate = false;
+            do {
+                String date = "";
+                System.out.print("Escriba la fecha de la cita(DD/MM/YY): ");
+                date = read.nextLine();
+                if (newDate.validateDate(date)) {
+                    newDate.setDate(date);
+                    validateDate = true;
+                } else {
+                    System.out.println();
+                    System.out.println("Error de fecha! Ingrese una fecha válida.");
+                    System.out.println();
+                }
+            } while (!validateDate);
+            
+            boolean validateTime = false;
+            do {
+                String time = "";
+                System.out.print("Escriba la hora de la cita(HH:MM): ");
+                time = read.nextLine();
+                if (newDate.validateTime(time)) {
+                    newDate.setTime(time);
+                    validateTime = true;
+                } else {
+                    System.out.println();
+                    System.out.println("Error de hora! Ingrese una hora válida.");
+                    System.out.println();
+                }
+            } while (!validateTime);
+            System.out.print("Escriba el motivo de la cita: ");
+            newDate.setMotive(read.nextLine());
+
+            newDate.save();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
